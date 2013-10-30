@@ -18,6 +18,7 @@ struct encode_req {
   unsigned char *input;
   int input_type;
   int num_samples;
+  int num_channels;
   unsigned char *output;
   int output_size;
   int rtn;
