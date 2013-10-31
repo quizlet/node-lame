@@ -90,7 +90,7 @@ Handle<Value> node_lame_encode_buffer (const Arguments& args) {
   char *input = UnwrapPointer(args[1]);
   int input_type = args[2]->Int32Value();
   int num_samples = args[3]->Int32Value();
-  int channels = args[4]->Int32Value();
+  int num_channels = args[4]->Int32Value();
 
   // the output buffer
   int out_offset = args[5]->Int32Value();
@@ -122,7 +122,7 @@ Handle<Value> node_lame_encode_buffer (const Arguments& args) {
 void node_lame_encode_buffer_async (uv_work_t *req) {
   encode_req *r = (encode_req *)req->data;
 
-  if (num_channels == 1 && r->input_type == PCM_TYPE_SHORT_INT) {
+  if (r->num_channels == 1 && r->input_type == PCM_TYPE_SHORT_INT) {
     // encoding short int inpur buffer
     r->rtn = lame_encode_buffer_interleaved(
       r->gfp,
@@ -131,7 +131,7 @@ void node_lame_encode_buffer_async (uv_work_t *req) {
       r->output,
       r->output_size
     );
-  } else if (num_channels == 2 && r->input_type == PCM_TYPE_SHORT_INT) {
+  } else if (r->num_channels == 2 && r->input_type == PCM_TYPE_SHORT_INT) {
     // encoding short int inpur buffer
     r->rtn = lame_encode_buffer(
       r->gfp,
@@ -141,7 +141,7 @@ void node_lame_encode_buffer_async (uv_work_t *req) {
       r->output,
       r->output_size
     );
-  } else if (num_channels == 2 && r->input_type == PCM_TYPE_FLOAT) {
+  } else if (r->num_channels == 2 && r->input_type == PCM_TYPE_FLOAT) {
     // encoding float input buffer
     r->rtn = lame_encode_buffer_ieee_float(
       r->gfp,
@@ -151,7 +151,7 @@ void node_lame_encode_buffer_async (uv_work_t *req) {
       r->output,
       r->output_size
     );
-  } else if (num_channels == 1 && r->input_type == PCM_TYPE_FLOAT) {
+  } else if (r->num_channels == 1 && r->input_type == PCM_TYPE_FLOAT) {
     // encoding float input buffer
     r->rtn = lame_encode_buffer_interleaved_ieee_float(
       r->gfp,
@@ -160,7 +160,7 @@ void node_lame_encode_buffer_async (uv_work_t *req) {
       r->output,
       r->output_size
     );
-  } else if (num_channels == 1 && r->input_type == PCM_TYPE_DOUBLE) {
+  } else if (r->num_channels == 1 && r->input_type == PCM_TYPE_DOUBLE) {
     // encoding double input buffer
     r->rtn = lame_encode_buffer_interleaved_ieee_double(
       r->gfp,
@@ -169,11 +169,12 @@ void node_lame_encode_buffer_async (uv_work_t *req) {
       r->output,
       r->output_size
     );
-  } else if (num_channels == 2 && r->input_type == PCM_TYPE_DOUBLE) {
+  } else if (r->num_channels == 2 && r->input_type == PCM_TYPE_DOUBLE) {
     // encoding double input buffer
     r->rtn = lame_encode_buffer_ieee_double(
       r->gfp,
       (double *)r->input,
+      (double *)0,
       r->num_samples,
       r->output,
       r->output_size
@@ -181,7 +182,7 @@ void node_lame_encode_buffer_async (uv_work_t *req) {
   }
 }
 
-void node_lame_encode_buffer_interleaved_after (uv_work_t *req) {
+void node_lame_encode_buffer_after (uv_work_t *req) {
   HandleScope scope;
 
   encode_req *r = (encode_req *)req->data;
@@ -428,7 +429,7 @@ void InitLame(Handle<Object> target) {
   NODE_SET_METHOD(target, "get_lame_version", node_get_lame_version);
   NODE_SET_METHOD(target, "get_lame_os_bitness", node_get_lame_os_bitness);
   NODE_SET_METHOD(target, "lame_close", node_lame_close);
-  NODE_SET_METHOD(TARGET, "lame_encode_buffer", node_lame_encode_buffer);
+  NODE_SET_METHOD(target, "lame_encode_buffer", node_lame_encode_buffer);
   NODE_SET_METHOD(target, "lame_encode_flush_nogap", node_lame_encode_flush_nogap);
   NODE_SET_METHOD(target, "lame_get_id3v1_tag", node_lame_get_id3v1_tag);
   NODE_SET_METHOD(target, "lame_get_id3v2_tag", node_lame_get_id3v2_tag);
