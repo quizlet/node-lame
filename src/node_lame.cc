@@ -122,7 +122,7 @@ Handle<Value> node_lame_encode_buffer (const Arguments& args) {
 void node_lame_encode_buffer_async (uv_work_t *req) {
   encode_req *r = (encode_req *)req->data;
 
-  if (r->num_channels == 1 && r->input_type == PCM_TYPE_SHORT_INT) {
+  if (r->num_channels == 2 && r->input_type == PCM_TYPE_SHORT_INT) {
     // encoding short int inpur buffer
     r->rtn = lame_encode_buffer_interleaved(
       r->gfp,
@@ -131,7 +131,7 @@ void node_lame_encode_buffer_async (uv_work_t *req) {
       r->output,
       r->output_size
     );
-  } else if (r->num_channels == 2 && r->input_type == PCM_TYPE_SHORT_INT) {
+  } else if (r->num_channels == 1 && r->input_type == PCM_TYPE_SHORT_INT) {
     // encoding short int inpur buffer
     r->rtn = lame_encode_buffer(
       r->gfp,
@@ -141,7 +141,7 @@ void node_lame_encode_buffer_async (uv_work_t *req) {
       r->output,
       r->output_size
     );
-  } else if (r->num_channels == 2 && r->input_type == PCM_TYPE_FLOAT) {
+  } else if (r->num_channels == 1 && r->input_type == PCM_TYPE_FLOAT) {
     // encoding float input buffer
     r->rtn = lame_encode_buffer_ieee_float(
       r->gfp,
@@ -151,7 +151,7 @@ void node_lame_encode_buffer_async (uv_work_t *req) {
       r->output,
       r->output_size
     );
-  } else if (r->num_channels == 1 && r->input_type == PCM_TYPE_FLOAT) {
+  } else if (r->num_channels == 2 && r->input_type == PCM_TYPE_FLOAT) {
     // encoding float input buffer
     r->rtn = lame_encode_buffer_interleaved_ieee_float(
       r->gfp,
@@ -162,19 +162,19 @@ void node_lame_encode_buffer_async (uv_work_t *req) {
     );
   } else if (r->num_channels == 1 && r->input_type == PCM_TYPE_DOUBLE) {
     // encoding double input buffer
-    r->rtn = lame_encode_buffer_interleaved_ieee_double(
+    r->rtn = lame_encode_buffer_ieee_double(
       r->gfp,
       (double *)r->input,
+      (double *)0,
       r->num_samples,
       r->output,
       r->output_size
     );
   } else if (r->num_channels == 2 && r->input_type == PCM_TYPE_DOUBLE) {
     // encoding double input buffer
-    r->rtn = lame_encode_buffer_ieee_double(
+    r->rtn = lame_encode_buffer_interleaved_ieee_double(
       r->gfp,
       (double *)r->input,
-      (double *)0,
       r->num_samples,
       r->output,
       r->output_size
