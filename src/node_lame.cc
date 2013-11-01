@@ -93,9 +93,9 @@ Handle<Value> node_lame_encode_buffer (const Arguments& args) {
   int num_channels = args[4]->Int32Value();
 
   // the output buffer
-  int out_offset = args[5]->Int32Value();
-  char *output = UnwrapPointer(args[4], out_offset);
-  int output_size = args[6]->Int32Value();
+  int out_offset = args[6]->Int32Value();
+  char *output = UnwrapPointer(args[5], out_offset);
+  int output_size = args[7]->Int32Value();
 
   encode_req *request = new encode_req;
   request->gfp = gfp;
@@ -104,7 +104,7 @@ Handle<Value> node_lame_encode_buffer (const Arguments& args) {
   request->num_samples = num_samples;
   request->output = (unsigned char *)output;
   request->output_size = output_size;
-  request->callback = Persistent<Function>::New(Local<Function>::Cast(args[7]));
+  request->callback = Persistent<Function>::New(Local<Function>::Cast(args[8]));
   request->num_channels = num_channels;
 
   // set a circular pointer so we can get the "encode_req" back later
